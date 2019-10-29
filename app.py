@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, send_from_directory
 # from flask_sqlalchemy import SQLAlchemy
 # from io import BytesIO
 import os 
-# import face_physio as fp
+import face_physio as fp
 
 app = Flask(__name__)
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -51,26 +51,26 @@ def index() :
 def upload() :
 
     target_images = os.path.join(APP_ROOT,'upload_images') # folder path
-    # target_file = os.path.join(APP_ROOT, 'result_text') # folder path
+    target_file = os.path.join(APP_ROOT, 'result_text') # folder path
     if not os.path.isdir(target_images) :
         os.mkdir(target_images)    # create folder if not exits
-    # if not os.path.isdir(target_file) :
-        # os.mkdir(target_file)   # create folder if not exits
+    if not os.path.isdir(target_file) :
+        os.mkdir(target_file)   # create folder if not exits
     if request.method == 'POST' :
         file = request.files['images']
         filename = file.filename
         destination = "\\".join([target_images, filename])
         file.save(destination)  # save file to folder
-        # result = fp.facephysio(destination) # send images to facephysio
+        result = fp.facephysio(destination) # send images to facephysio
         # n = rename(filename, target_images) # rename image
-        # write_file(target_file, str(result), filename)   # write file keep result
+        write_file(target_file, str(result), filename)   # write file keep result
 
         # newfile = FileContents(name=file.filename, data=file.read())  # Save to DB
         # db.session.add(newfile)
         # db.session.commit()
     # return send_from_directory("upload_images", filename, as_attachment=True)
-    return render_template('show.html', image_name=filename)
-    # return render_template('show.html', image_name=filename, data=result)
+
+    return render_template('show.html', image_name=filename, data=result)
 
 @app.route('/upload/<filename>')
 def send_image(filename) :
